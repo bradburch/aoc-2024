@@ -2,12 +2,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import day1.Day;
+import day2.Day;
 
 public class Main {
     public static void main(String[] args) {
-        try(BufferedReader br = new BufferedReader(new FileReader("day1/input.txt"))) {
-        // try(BufferedReader br = new BufferedReader(new FileReader("day1/test.txt"))) {
+        String dayNum = "day2/";
+        try(BufferedReader br = new BufferedReader(new FileReader(dayNum + "input.txt"))) {
+        // try(BufferedReader br = new BufferedReader(new FileReader(dayNum + "test.txt"))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
