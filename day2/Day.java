@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Day {
 
-    ArrayList<List<Integer>> reports = new ArrayList<>();
+    private ArrayList<List<Integer>> reports = new ArrayList<>();
 
     public void part1() {
         int safe = 0;

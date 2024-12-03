@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 public class Day {
 
-    ArrayList<Integer> list1 = new ArrayList<>();
-    ArrayList<Integer> list2 = new ArrayList<>();
+    private ArrayList<Integer> list1 = new ArrayList<>();
+    private ArrayList<Integer> list2 = new ArrayList<>();
 
     public void part1() {
         Collections.sort(list1);
