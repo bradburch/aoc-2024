@@ -2,7 +2,6 @@ package day5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,8 +29,8 @@ public class Day {
         ArrayList<ArrayList<Integer>> invalids = retrieveOrders(false);
         int sum = 0;
 
-        for (List<Integer> valid : invalids) {
-            sum += valid.get(valid.size()/2);
+        for (List<Integer> invalid : invalids) {
+            sum += invalid.get(invalid.size()/2);
         }
 
         System.out.println("Newly valid: " + sum);
