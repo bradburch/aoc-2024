@@ -2,6 +2,8 @@ package day5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,24 +41,21 @@ public class Day {
         ArrayList<ArrayList<Integer>> result = new ArrayList<>();
 
         for (ArrayList<Integer> printOrder : printOrders) {
-            boolean invalid = false;
+            boolean valid = false;
             for (int i = 0; i < printOrder.size(); i++) {
                 Set<Integer> pagesBefore = orderingRules.getOrDefault(printOrder.get(i), new HashSet<>());
                 List<Integer> pagesAfter = printOrder.subList(i, printOrder.size());
 
-                for (int j = 0; j < pagesAfter.size(); j++) {
-                    if (pagesBefore.contains(pagesAfter.get(j))) {
-                        if (!returnValid) {
-                            result.add(swap(printOrder));
-                        }
-                        invalid = true;
-                        break;
-                    }
+                valid = Collections.disjoint(pagesAfter, pagesBefore);
+
+                if (!valid && !returnValid) {
+                    result.add(swap(printOrder));
+                    break;
                 }
 
-                if (invalid) break;
+                if (!valid) break;
             }
-            if (returnValid && !invalid) result.add(printOrder);
+            if (returnValid && valid) result.add(printOrder);
         }
 
         return result;
