@@ -38,7 +38,7 @@ public class Day {
             return prev;
         }
 
-        if (index == eq.size()) {
+        if (index == eq.size() || prev > target) {
             return 0L;
         }
 
