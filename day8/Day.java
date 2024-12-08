@@ -14,6 +14,19 @@ public class Day {
     private HashMap<Character, ArrayList<Coords>> antennas = new HashMap<>();
     
     public void part1() {
+        populateAntennaPositions();
+        Set<Coords> antinodes = new HashSet<>(calculateAntinodePositions(false));
+
+        System.out.println("Unique Antinode Locations: " + antinodes.size());
+    }
+
+    public void part2() {
+        Set<Coords> antinodes = new HashSet<>(calculateAntinodePositions(true));
+
+        System.out.println("Unique Antinode Locations: " + antinodes.size());
+    }
+
+    private void populateAntennaPositions() {
         for(int i = 0; i < map.length; i++) {
             for(int j = 0; j < map[i].length; j++) {
                 if (map[i][j] != '.') {
@@ -23,6 +36,9 @@ public class Day {
                 }
             }
         }
+    }
+
+    private Set<Coords> calculateAntinodePositions(boolean resonateHarmonics) {
         Set<Coords> antinodes = new HashSet<>();
 
         for (ArrayList<Coords> value : antennas.values()) {
@@ -43,23 +59,34 @@ public class Day {
                         int antinode2Y = compareY - yDiff;
                         int antinode2X = compareX - xDiff;
 
-                        if (antinode1Y < map.length && antinode1Y >= 0 && antinode1X < map[y].length && antinode1X >= 0) {
+                        while (antinode1Y < map.length && antinode1Y >= 0 && antinode1X < map[y].length && antinode1X >= 0) {
                             antinodes.add(new Coords(antinode1Y, antinode1X));
+
+                            if (!resonateHarmonics) break;
+
+                            antinode1Y += yDiff;
+                            antinode1X += xDiff;
                         }
 
-                        if (antinode2Y < map.length && antinode2Y >= 0 && antinode2X < map[y].length && antinode2X >= 0) {
+                        while (antinode2Y < map.length && antinode2Y >= 0 && antinode2X < map[y].length && antinode2X >= 0) {
                             antinodes.add(new Coords(antinode2Y, antinode2X));
+
+                            if (!resonateHarmonics) break;
+
+                            antinode2Y -= yDiff;
+                            antinode2X -= xDiff;
+                        }
+
+                        if (resonateHarmonics) {
+                            antinodes.add(new Coords(y, x));
+                            antinodes.add(new Coords(compareY, compareX));
                         }
                     }
                 }
             }
         }
 
-        System.out.println("Unique Antinode Locations: " + antinodes.size());
-    }
-
-    public void part2() {
-
+        return antinodes;
     }
 
     public void parseInput(String data) {
