@@ -2,11 +2,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import day8.Day;
+import day9.Day;
 
 public class Main {
     public static void main(String[] args) {
-        String dayNum = "day8/";
+        String dayNum = "day9/";
         String input = "input.txt";
         String test = "test.txt";
 
