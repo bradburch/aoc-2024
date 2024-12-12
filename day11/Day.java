@@ -1,7 +1,9 @@
 package day11;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,42 +14,57 @@ public class Day {
     public void part1() {
         ArrayList<Long> currentRocks = new ArrayList<>(rocks);
 
-        for (int blink = 0; blink < 25; blink++) {
-            currentRocks = new ArrayList<>(changeStones(currentRocks));
-        }
+        HashMap<Long, Long> rockCount = changeStones(currentRocks, 25);
 
-        System.out.println("Number of rocks: " + currentRocks.size());
+        System.out.println("Number of rocks after 25 blinks: " + countRocks(rockCount));
     }
 
-    private ArrayList<Long> changeStones(ArrayList<Long> prevRocks) {
-        ArrayList<Long> newRocks = new ArrayList<>();
+    public void part2() {
+        ArrayList<Long> currentRocks = new ArrayList<>(rocks);
 
-        for(int i = 0; i < prevRocks.size(); i++) {
-            Long current = prevRocks.get(i);
-            StringBuilder currentString = new StringBuilder();
-            currentString.append(current);
+        HashMap<Long, Long> rockCount = changeStones(currentRocks, 75);
 
-            if (current == 0) {
-                newRocks.add(1L);
-            } else if (currentString.length() % 2 == 0) {
-                int middle = currentString.length() / 2;
-                String firstHalf = currentString.substring(0, middle);
-                String secondHalf = currentString.substring(middle, currentString.length());
-                Long firstH = Long.valueOf(firstHalf);
-                Long secondH = Long.valueOf(secondHalf);
+        System.out.println("Number of rocks after 75 blinks: " + countRocks(rockCount));
+    }
 
-                newRocks.add(firstH);
-                newRocks.add(secondH);
-            } else {
-                newRocks.add(current * 2024L);
+    private HashMap<Long, Long> changeStones(ArrayList<Long> stones, int blinks) {
+        HashMap<Long, Long> newRocks = new HashMap<>();
+
+        for (Long val : stones) {
+            Long count = newRocks.getOrDefault(val, 0L);
+            newRocks.put(val, ++count);
+        }
+
+        for (int i = 0; i < blinks; i++) {
+            HashMap<Long, Long> blinkRocks = new HashMap<>();
+            for (Map.Entry<Long, Long> entry : newRocks.entrySet()) {
+                StringBuilder currentString = new StringBuilder();
+                Long current = entry.getKey();
+                currentString.append(current);
+                
+                if (current == 0) {
+                    blinkRocks.merge(1L, entry.getValue(), Long::sum);
+                } else if (currentString.length() % 2 == 0) {
+                    int middle = currentString.length() / 2;
+                    String firstHalf = currentString.substring(0, middle);
+                    String secondHalf = currentString.substring(middle, currentString.length());
+                    Long firstH = Long.valueOf(firstHalf);
+                    Long secondH = Long.valueOf(secondHalf);
+    
+                    blinkRocks.merge(firstH, entry.getValue(), Long::sum);
+                    blinkRocks.merge(secondH, entry.getValue(), Long::sum);
+                } else {
+                    blinkRocks.merge(current * 2024L, entry.getValue(), Long::sum);
+                }
             }
+            newRocks = blinkRocks;
         }
 
         return newRocks;
     }
 
-    public void part2() {
-
+    private long countRocks(HashMap<Long, Long> rocks) {
+        return rocks.values().stream().reduce(0L, Long::sum);
     }
 
     public void parseInput(String data) {
