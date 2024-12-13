@@ -10,7 +10,7 @@ public class Main {
         String input = "input.txt";
         String test = "test.txt";
 
-        try(BufferedReader br = new BufferedReader(new FileReader(dayNum + test))) {
+        try(BufferedReader br = new BufferedReader(new FileReader(dayNum + input))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
