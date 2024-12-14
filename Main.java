@@ -18,7 +18,7 @@ public class Main {
                 sb.append(line);
                 sb.append(System.lineSeparator());
                 line = br.readLine();
-            }
+            }            
             String data = sb.toString();
 
             Day day = new Day();

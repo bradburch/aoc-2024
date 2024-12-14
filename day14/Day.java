@@ -7,16 +7,18 @@ import java.util.Scanner;
 public class Day {
 
     record Coords(int x, int y) {}
+    String input;
 
-    ArrayList<Robot> robots = new ArrayList<>();
+    ArrayList<Robot> robots;
     HashMap<Coords, ArrayList<Robot>> coordsRobots = new HashMap<>();
 
     private static final int AREA_WIDTH = 101;
     private static final int AREA_HEIGHT = 103;
 
     public void part1() {
+        ArrayList<Robot> nrobots = new ArrayList<>(robots);
 
-        for (Robot robot : robots) {
+        for (Robot robot : nrobots) {
             determinePosition(robot, 100);
         }
 
@@ -32,42 +34,44 @@ public class Day {
     }
 
     public void part2() {
+        parseInput(input);
 
+        for(int i = 1; i < 100000; i++) {
+            coordsRobots = new HashMap<>();
+
+            for (Robot robot : robots) {
+                determinePosition(robot, 1);
+            }
+
+            if (findTree()) {
+                printTree();
+                System.out.println("This iteration: " + i);
+                System.out.println();
+                break;
+            }
+        }
     }
 
     private void determinePosition(Robot robot, int seconds) {
-        Coords velocity = robot.getVelocity();
-
-        int vx = velocity.x();
-        int vy = velocity.y();
+        int vx = robot.getVelocityX();
+        int vy = robot.getVelocityY();
 
         for (int i = 0; i < seconds; i++) {
-            int px = robot.getPosition().x();
-            int py = robot.getPosition().y();
+            int px = robot.getX();
+            int py = robot.getY();
 
-            int newPX = px + vx;
-            int newPY = py + vy;
-
-            if (newPX < 0) {
-                newPX = AREA_WIDTH + newPX;
-            }
-            if (newPX >= AREA_WIDTH) {
-                newPX = newPX - AREA_WIDTH;
-            }
-
-            if (newPY < 0) {
-                newPY = AREA_HEIGHT + newPY;
-            }
-            if (newPY >= AREA_HEIGHT) {
-                newPY = newPY - AREA_HEIGHT;
-            }
-
-            robot.setPosition(new Coords(newPX, newPY));
-        }
+            int newX = px + vx;
+            int newY = py + vy;
         
-        ArrayList<Robot> robots = coordsRobots.getOrDefault(robot.getPosition(), new ArrayList<>());
+            int x = newX >= AREA_WIDTH ? newX % AREA_WIDTH : newX < 0 ? AREA_WIDTH + newX : newX;
+            int y = newY >= AREA_HEIGHT ? newY % AREA_HEIGHT : newY < 0 ? AREA_HEIGHT + newY : newY;
+
+            robot.setPosition(x, y);
+        }
+        Coords c = new Coords(robot.getX(), robot.getY());
+        ArrayList<Robot> robots = coordsRobots.getOrDefault(c, new ArrayList<>());
         robots.add(robot);
-        coordsRobots.put(robot.getPosition(), robots);
+        coordsRobots.put(c, robots);
     }
 
     private int calculateQuadrant(int xStart, int xEnd, int yStart, int yEnd) {
@@ -82,8 +86,33 @@ public class Day {
         return numRobots;
     }
 
+    private boolean findTree() {
+        for (ArrayList<Robot> robots : coordsRobots.values()) {
+            if (robots.size() > 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void printTree() {
+        for (int i = 0;i < AREA_HEIGHT; i++) {
+            for(int j = 0;j < AREA_WIDTH; j++) {
+                Coords c = new Coords(j, i);
+                if (coordsRobots.containsKey(c)) {
+                    System.out.print("X");
+                } else {
+                    System.out.print(".");
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public void parseInput(String data) {
+        input = data;
         Scanner scanner = new Scanner(data);
+        robots = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -95,7 +124,7 @@ public class Day {
             int velX = Integer.valueOf(str[2]);
             int velY = Integer.valueOf(str[3]);
 
-            Robot robot = new Robot(new Coords(posX, posY), new Coords(velX, velY));
+            Robot robot = new Robot(posX, posY, velX, velY);
             
             robots.add(robot);
         }
