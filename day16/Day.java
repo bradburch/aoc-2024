@@ -1,14 +1,17 @@
 package day16;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Day {
-
+    /** Inspired by looking at examples on AOC subreddit */
     private enum Direction {
         NORTH, 
         SOUTH, 
@@ -18,30 +21,34 @@ public class Day {
 
     private record Coord(int y, int x) {}
     private record Reindeer(Coord position, Direction direction) {}
-    private record State(Reindeer reindeer, int price, HashSet<Coord> visited) {}
+    private record State(Reindeer reindeer, int price, HashSet<Coord> visited) {
+        static Comparator<State> PRICE_COMPARATOR = Comparator.comparing(State::price);
+    }
 
     private char[][] maze;
     private Reindeer start;
     private HashMap<Reindeer, Integer> reindeerPrice = new HashMap<>();
+    private Set<Coord> bestSeats = new HashSet<>();
 
     public void part1() {
-        int score = search();
-
-        System.out.println(score);
+        System.out.println("Score: " + search());
     }
 
     public void part2() {
+        search();
 
+        System.out.println("Best seats: " + bestSeats.size());
     }
 
     private int search() {
-        Queue<State> queue = new LinkedList<>();
-        State startState = new State(start, 0, new HashSet<>());
+        Queue<State> queue = new PriorityQueue<>(State.PRICE_COMPARATOR);
+        State startState = new State(start, 0, new HashSet<>(List.of(start.position)));
         queue.add(startState);
         reindeerPrice.put(start, 0);
         int minPrice = Integer.MAX_VALUE;
+        boolean bestPathsFound = false;
         
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty() && !bestPathsFound) {
             State current = queue.poll();
 
             for (State next : nextStates(current)) {
@@ -49,11 +56,12 @@ public class Day {
                     queue.add(next);
                     reindeerPrice.put(next.reindeer, next.price);
                     if (isEnd(next)) {
+                        bestPathsFound = minPrice < next.price;
                         minPrice = Math.min(minPrice, next.price);
+                        bestSeats.addAll(next.visited);
                     }
                 }
             }
-            
         }
 
         return minPrice;
