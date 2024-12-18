@@ -24,7 +24,17 @@ public class Day {
     }
 
     public void part2() {
+        for (int i = 1024; i < corruptedMemory.size(); i++) {
+            reset();
+            corrupt(i);
+            int s = pathFind();
 
+            if (s == Integer.MAX_VALUE) {
+                System.out.println("Blocked at: " + corruptedMemory.get(i-1));
+                break;
+            }
+        }
+        printSpace();
     }
 
     private void corrupt(int bytes) {
@@ -92,6 +102,15 @@ public class Day {
         v.add(newCoords);
 
         return new State(newCoords, steps + 1, v);
+    }
+
+    private void reset() {
+        seen = new HashSet<>();
+        for(int i = 0; i < memorySpace.length; i++) {
+            for(int j = 0; j < memorySpace[i].length; j++) {
+                memorySpace[i][j] = '.';
+            }
+        }
     }
 
     private void printSpace() {
